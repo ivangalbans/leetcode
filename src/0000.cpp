@@ -35,16 +35,23 @@ const int MOD = 1000000000 + 7;
 
 class Solution {
 public:
-  vector<int> twoSum(vector<int> &nums, int target) {
-    unordered_map<int, int> map;
-
-    for (int i = 0; i < nums.size(); ++i) {
-      if (map.count(target - nums[i]))
-        return {map[target - nums[i]], i};
-      map[nums[i]] = i;
+  int count(int n) {
+    int sum = 0;
+    while (n) {
+      sum += n % 10;
+      n /= 10;
     }
 
-    return {-1, -1};
+    return sum;
+  }
+
+  int countEven(int num) {
+    int ans = 0;
+    for (int i = 1; i <= num; ++i) {
+      if (count(i) % 2 == 0)
+        ans++;
+    }
+    return ans;
   }
 };
 
@@ -52,20 +59,9 @@ int main() {
   ios_base::sync_with_stdio(false);
   cin.tie(0);
 
-  // vi v = {2, 7, 11, 15};
-  // int k = 9;
-
-  // vi v = {3, 3};
-  // int k = 6;
-
-  vi v = {3, 2, 4};
-  int k = 6;
-
   Solution sol;
-  vi ans = sol.twoSum(v, k);
 
-  for (auto x : ans)
-    cout << x << " ";
+  cout << sol.countEven(4);
 
   return 0;
 }
