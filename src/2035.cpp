@@ -52,3 +52,60 @@ public:
         return diff;
     }
 };
+
+// Meet in the middle + Two Pointers
+
+class Solution
+{
+public:
+    int minimumDifference(vector<int> &nums)
+    {
+        int n = nums.size() / 2;
+        vector<vector<int>> left(n + 1), right(n + 1);
+
+        for (int mask = 0; mask < (1 << n); ++mask)
+        {
+            int nbits = 0, sumL = 0, sumR = 0;
+            for (int i = 0; i < n; ++i)
+            {
+                if (mask & (1 << i))
+                {
+                    nbits++;
+                    sumL += nums[i];
+                    sumR += nums[i + n];
+                }
+            }
+            left[nbits].push_back(sumL);
+            right[nbits].push_back(sumR);
+        }
+
+        int sum = accumulate(begin(nums), end(nums), 0);
+
+        for (auto &v : left)
+            sort(begin(v), end(v));
+        for (auto &v : right)
+            sort(begin(v), end(v));
+
+        int diff = min(abs(sum - 2 * left[n][0]), abs(sum - 2 * right[n][0]));
+
+        for (int lbits = 0; lbits <= n; lbits++)
+        {
+            int rbits = n - lbits;
+            int l = 0, r = right[rbits].size() - 1;
+
+            while (l < left[lbits].size() && r >= 0)
+            {
+                int sumX = left[lbits][l] + right[rbits][r];
+                int sumY = sum - sumX;
+                diff = min(diff, abs(sumX - sumY));
+
+                if (2 * sumX > sum)
+                    r--;
+                else
+                    l++;
+            }
+        }
+
+        return diff;
+    }
+};
