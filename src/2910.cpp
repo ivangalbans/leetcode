@@ -1,44 +1,47 @@
-// https://leetcode.com/problems/minimum-number-of-groups-to-create-a-valid-assignment/description/
+// https://leetcode.com/problems/minimum-number-of-groups-to-create-a-valid-assignment/
 
 class Solution
 {
 public:
+    int minGroups(vector<int> &freq, int size)
+    {
+        int groups_cnt = 0;
+        for (auto num : freq)
+        {
+            int d = num / (size + 1);
+            int r = num % (size + 1);
+            if (r == 0)
+                groups_cnt += d;
+            else if (size - r <= d)
+                groups_cnt += d + 1;
+            else
+                return INT_MAX;
+        }
+
+        return groups_cnt;
+    }
+
     int minGroupsForValidAssignment(vector<int> &nums)
     {
         int n = nums.size();
 
         if (n == 1)
-        {
             return 1;
-        }
 
-        sort(begin(nums), end(nums));
-        priority_queue<int> pq;
+        unordered_map<int, int> mp;
+        for (auto num : nums)
+            mp[num]++;
 
-        nums.push_back(-1);
-        int c = 1, m = 1e9 + 1;
-        for (int i = 1; i <= n; ++i)
-        {
-            if (nums[i] == nums[i - 1])
-                c++;
-            else
-            {
-                pq.push(c);
-                m = min(m, c);
-                c = 1;
-            }
-        }
+        vector<int> freq;
+        for (auto kv : mp)
+            freq.push_back(kv.second);
 
-        while (abs(pq.top() - m) > 1)
-        {
-            int val = pq.top();
-            pq.pop();
-            int x = val / 2, y = val - x;
-            m = min({m, x, y});
-            pq.push(x);
-            pq.push(y);
-        }
+        int m = *min_element(begin(freq), end(freq));
 
-        return pq.size();
+        int ans = INT_MAX;
+        for (int i = 1; i <= m; ++i)
+            ans = min(ans, minGroups(freq, i));
+
+        return ans;
     }
 };
