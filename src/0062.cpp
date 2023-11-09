@@ -1,5 +1,32 @@
 // https://leetcode.com/problems/unique-paths/description/
 
+// Top Down + Memoization
+
+class Solution
+{
+public:
+    int uniquePaths(int i, int j, int m, int n, int memo[][100])
+    {
+        if (i == m && j == n)
+            return 1;
+
+        if (i > m || j > n)
+            return 0;
+
+        if (memo[i][j])
+            return memo[i][j];
+
+        return memo[i][j] = uniquePaths(i + 1, j, m, n, memo) + uniquePaths(i, j + 1, m, n, memo);
+    }
+
+    int uniquePaths(int m, int n)
+    {
+        int memo[100][100] = {0};
+        return uniquePaths(0, 0, m - 1, n - 1, memo);
+    }
+};
+
+// Bottom Up
 class Solution
 {
 public:

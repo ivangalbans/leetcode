@@ -1,5 +1,37 @@
 // https://leetcode.com/problems/unique-paths-ii/
 
+// Top Down + Memoization
+
+class Solution
+{
+public:
+    int dfs(int i, int j, int m, int n, vector<vector<int>> &grid, vector<vector<int>> &memo)
+    {
+        if (i > m || j > n)
+            return 0;
+
+        if (grid[i][j])
+            return 0;
+
+        if (i == m && j == n)
+            return 1;
+
+        if (memo[i][j] != -1)
+            return memo[i][j];
+
+        return memo[i][j] = dfs(i + 1, j, m, n, grid, memo) + dfs(i, j + 1, m, n, grid, memo);
+    }
+
+    int uniquePathsWithObstacles(vector<vector<int>> &grid)
+    {
+        int m = grid.size();
+        int n = grid[0].size();
+        vector<vector<int>> memo(m, vector<int>(n, -1));
+        return dfs(0, 0, m - 1, n - 1, grid, memo);
+    }
+};
+
+// Bottom Up
 class Solution
 {
 public:
