@@ -60,3 +60,40 @@ public:
         return scc;
     }
 };
+
+// DFS
+
+class Solution
+{
+public:
+    void dfs(vector<int> g[200], int u, vector<bool> &visited)
+    {
+        visited[u] = true;
+        for (auto v : g[u])
+            if (!visited[v])
+                dfs(g, v, visited);
+    }
+
+    int findCircleNum(vector<vector<int>> &m)
+    {
+        int n = m.size();
+        vector<int> g[200];
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < n; ++j)
+                if (m[i][j])
+                    g[i].push_back(j);
+
+        int scc = 0;
+        vector<bool> visited(n);
+        for (int i = 0; i < n; ++i)
+        {
+            if (!visited[i])
+            {
+                dfs(g, i, visited);
+                ++scc;
+            }
+        }
+
+        return scc;
+    }
+};

@@ -49,3 +49,32 @@ public:
         return ds.set_of(src) == ds.set_of(dst);
     }
 };
+
+// DFS
+
+class Solution
+{
+public:
+    void dfs(vector<int> g[200001], int u, vector<bool> &visited)
+    {
+        visited[u] = true;
+        for (auto v : g[u])
+            if (!visited[v])
+                dfs(g, v, visited);
+    }
+
+    bool validPath(int n, vector<vector<int>> &edges, int src, int dst)
+    {
+        vector<int> g[200001];
+        for (auto e : edges)
+        {
+            g[e[0]].push_back(e[1]);
+            g[e[1]].push_back(e[0]);
+        }
+
+        vector<bool> visited(n);
+        dfs(g, src, visited);
+
+        return visited[dst];
+    }
+};
