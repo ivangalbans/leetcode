@@ -98,3 +98,89 @@ public:
         return lo - 1;
     }
 };
+
+// Dijkstra
+
+class Solution
+{
+public:
+    const int oo = 1e6;
+    const int dx[4] = {-1, 0, 1, 0};
+    const int dy[4] = {0, 1, 0, -1};
+
+    bool inside(int i, int j, int n)
+    {
+        return i >= 0 && i < n && j >= 0 && j < n;
+    }
+
+    void compute_sf(vector<vector<int>> &grid, int n, vector<vector<int>> &sf)
+    {
+        queue<pair<int, int>> q;
+        for (int i = 0; i < n; ++i)
+        {
+            for (int j = 0; j < n; ++j)
+            {
+                if (grid[i][j])
+                {
+                    q.push({i, j});
+                    sf[i][j] = 0;
+                }
+            }
+        }
+
+        while (!q.empty())
+        {
+            auto [i, j] = q.front();
+            q.pop();
+            for (int dir = 0; dir < 4; ++dir)
+            {
+                int x = i + dx[dir];
+                int y = j + dy[dir];
+                if (inside(x, y, n) && sf[x][y] == oo)
+                {
+                    sf[x][y] = sf[i][j] + 1;
+                    q.push({x, y});
+                }
+            }
+        }
+    }
+
+    void dijkstra(vector<vector<int>> &sf, int n, vector<vector<int>> &d)
+    {
+        priority_queue<array<int, 3>> pq;
+
+        d[0][0] = sf[0][0];
+        pq.push({d[0][0], 0, 0});
+        while (!pq.empty())
+        {
+            auto [f, i, j] = pq.top();
+            pq.pop();
+            if (f == d[i][j])
+            {
+                for (int k = 0; k < 4; ++k)
+                {
+                    int x = i + dx[k];
+                    int y = j + dy[k];
+                    if (inside(x, y, n) && min(d[i][j], sf[x][y]) > d[x][y])
+                    {
+                        d[x][y] = min(d[i][j], sf[x][y]);
+                        pq.push({d[x][y], x, y});
+                    }
+                }
+            }
+        }
+    }
+
+    int maximumSafenessFactor(vector<vector<int>> &grid)
+    {
+        int n = grid.size();
+
+        vector<vector<int>> sf(n, vector<int>(n, oo));
+        compute_sf(grid, n, sf);
+
+        vector<vector<int>> d(n, vector<int>(n));
+        dijkstra(sf, n, d);
+
+        return d[n - 1][n - 1];
+    }
+};
