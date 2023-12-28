@@ -74,3 +74,33 @@ public:
         return max_d == oo ? -1 : max_d;
     }
 };
+
+// Floyd-Warshall
+
+class Solution
+{
+public:
+    const int oo = 1e9;
+
+    void floyd_warshall(int n, vector<vector<int>> &d)
+    {
+        for (int k = 0; k < n; ++k)
+            for (int i = 0; i < n; ++i)
+                for (int j = 0; j < n; ++j)
+                    d[i][j] = min(d[i][j], d[i][k] + d[k][j]);
+    }
+
+    int networkDelayTime(vector<vector<int>> &times, int n, int k)
+    {
+        vector<vector<int>> d(n, vector<int>(n, oo));
+        for (auto e : times)
+            d[e[0] - 1][e[1] - 1] = e[2];
+
+        for (int i = 0; i < n; ++i)
+            d[i][i] = 0;
+
+        floyd_warshall(n, d);
+        int best = *max_element(begin(d[k - 1]), end(d[k - 1]));
+        return best == oo ? -1 : best;
+    }
+};

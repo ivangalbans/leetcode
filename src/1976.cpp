@@ -47,3 +47,60 @@ public:
         return d[n - 1].second;
     }
 };
+
+// Floyd Warshall
+
+class Solution
+{
+public:
+    const long long oo = 1e15;
+    const long long MOD = 1e9 + 7;
+
+    void floyd_warshall(int n, vector<vector<long long>> &d, vector<vector<long long>> &w)
+    {
+        for (int i = 0; i < n; ++i)
+        {
+            d[i][i] = 0;
+            w[i][i] = 1;
+        }
+
+        for (int k = 0; k < n; ++k)
+        {
+            for (int i = 0; i < n; ++i)
+            {
+                for (int j = 0; j < n; ++j)
+                {
+                    if (i != k && j != k)
+                    {
+                        if (d[i][k] + d[k][j] == d[i][j])
+                        {
+                            w[i][j] = (w[i][j] + w[i][k] * w[k][j]) % MOD;
+                        }
+                        if (d[i][k] + d[k][j] < d[i][j])
+                        {
+                            w[i][j] = (w[i][k] * w[k][j]) % MOD;
+                            d[i][j] = d[i][k] + d[k][j];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    int countPaths(int n, vector<vector<int>> &roads)
+    {
+        vector<vector<long long>> d(n, vector<long long>(n, oo));
+        vector<vector<long long>> w(n, vector<long long>(n));
+
+        for (auto e : roads)
+        {
+            d[e[0]][e[1]] = e[2];
+            d[e[1]][e[0]] = e[2];
+            w[e[0]][e[1]] = 1;
+            w[e[1]][e[0]] = 1;
+        }
+
+        floyd_warshall(n, d, w);
+        return w[0][n - 1];
+    }
+};
