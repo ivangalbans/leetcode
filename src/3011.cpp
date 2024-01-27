@@ -31,7 +31,6 @@ public:
 };
 
 // Disjoint set
-
 struct disjoint_set
 {
 
@@ -76,22 +75,19 @@ public:
     {
         disjoint_set ds(257);
         int n = nums.size();
-        vector<int> v(begin(nums), end(nums));
-        sort(begin(v), end(v));
+        vector<int> v(n);
+        iota(begin(v), end(v), 0);
+
+        sort(begin(v), end(v), [&](int i, int j)
+             { return nums[i] < nums[j]; });
 
         for (int i = 0; i < n - 1; ++i)
-        {
             if (__builtin_popcount(nums[i]) == __builtin_popcount(nums[i + 1]))
-                ds.merge(nums[i], nums[i + 1]);
-        }
+                ds.merge(i, i + 1);
 
         for (int i = 0; i < n; ++i)
-        {
-            if (ds.set_of(v[i]) != ds.set_of(nums[i]))
-            {
+            if (ds.set_of(i) != ds.set_of(v[i]))
                 return false;
-            }
-        }
 
         return true;
     }
