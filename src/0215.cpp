@@ -156,3 +156,71 @@ public:
     //     return pq.top();
     // }
 };
+
+// O(n*log(k))
+
+class Solution
+{
+public:
+    int findKthLargest(vector<int> &nums, int k)
+    {
+        int n = nums.size();
+        priority_queue<int, vector<int>, greater<int>> pq;
+
+        for (auto x : nums)
+        {
+            pq.push(x);
+            if (pq.size() > k)
+                pq.pop();
+        }
+
+        return pq.top();
+    }
+};
+
+// QuickSelect
+
+class Solution
+{
+public:
+    int partition(vector<int> &nums, int l, int r)
+    {
+        int p = l;
+        int i = l;
+        swap(nums[p], nums[r]);
+        for (int j = l; j < r; ++j)
+        {
+            if (nums[j] < nums[r])
+            {
+                swap(nums[j], nums[i]);
+                i++;
+            }
+        }
+        swap(nums[i], nums[r]);
+        return i;
+    }
+
+    int quickSelect(vector<int> &nums, int l, int r, int k)
+    {
+        while (true)
+        {
+            int p = partition(nums, l, r);
+            if (p == k)
+                return nums[p];
+            if (p < k)
+                l = p + 1;
+            else
+                r = p - 1;
+        }
+    }
+
+    int quickSelect(vector<int> &nums, int k)
+    {
+        return quickSelect(nums, 0, nums.size() - 1, k);
+    }
+
+    int findKthLargest(vector<int> &nums, int k)
+    {
+        return quickSelect(nums, nums.size() - k);
+    }
+};
